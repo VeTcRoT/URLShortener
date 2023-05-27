@@ -1,14 +1,29 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UrlShortener.Models;
+using UrlShortener.ViewModels;
 
 namespace UrlShortener.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IUrlDataRepository _urlDataRepository;
+        private readonly IMapper _mapper;
+
+        public HomeController(IUrlDataRepository urlDataRepository, IMapper mapper)
         {
-            return View();
+            _urlDataRepository = urlDataRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var urlDatas = await _urlDataRepository.GetAllAsync();
+
+            var mappedUrlData = _mapper.Map<IEnumerable<UrlViewModel>>(urlDatas);
+            
+            return View(mappedUrlData);
         }
     }
 

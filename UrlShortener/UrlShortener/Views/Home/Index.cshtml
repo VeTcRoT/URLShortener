@@ -1,8 +1,32 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<UrlViewModel>
+@inject IUrlHelper UrlHelper
+
+@{
+    ViewData["Title"] = "URLs";
+    string baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host.Value}";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Original Url</th>
+            <th>Shorted Url</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UrlViewModel url in Model)
+        {
+            <tr>
+                <td>
+                    <a target="_blank" href="@url.OriginalUrl">@(url.OriginalUrl.Length > 40 ? url.OriginalUrl.Substring(0, 40) + "..." : url.OriginalUrl)</a>
+                </td>
+                <td>
+                    <a target="_blank" href="@(baseUrl + "/" + url.ShortUrl)">@(baseUrl + "/" + url.ShortUrl)</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

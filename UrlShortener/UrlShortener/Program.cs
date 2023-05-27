@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using UrlShortener.Data;
 using UrlShortener.Models;
 
@@ -25,6 +26,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddEntityFrameworkStores<UrlShortenerDbContext>();
 
 builder.Services.AddScoped<IUrlDataRepository, UrlDataRepository>();
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
