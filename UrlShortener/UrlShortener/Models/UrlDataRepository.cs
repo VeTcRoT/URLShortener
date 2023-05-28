@@ -35,17 +35,17 @@ namespace UrlShortener.Models
             return await _dbContext.UrlDatas.Include(u => u.User).FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<UrlData?> GetByOriginalUrl(string originalUrl)
+        public async Task<UrlData?> GetByOriginalUrlAsync(string originalUrl)
         {
             return await _dbContext.UrlDatas.FirstOrDefaultAsync(u => u.OriginalUrl == originalUrl);
         }
 
-        public async Task<UrlData?> GetByShortUrl(string shortUrl)
+        public async Task<UrlData?> GetByShortUrlAsync(string shortUrl)
         {
             return await _dbContext.UrlDatas.FirstOrDefaultAsync(u => u.ShortUrl == shortUrl);
         }
 
-        public async Task<IEnumerable<UrlData>> GetUserUrls(IdentityUser user)
+        public async Task<IEnumerable<UrlData>> GetUserUrlsAsync(IdentityUser user)
         {
             return await _dbContext.UrlDatas.Where(u => u.User == user).ToListAsync();
         }

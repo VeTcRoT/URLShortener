@@ -44,7 +44,7 @@ namespace UrlShortener.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var userUrls = await _urlDataRepository.GetUserUrls(user);
+            var userUrls = await _urlDataRepository.GetUserUrlsAsync(user);
 
             var mappedUrls = _mapper.Map<IEnumerable<UrlViewModel>>(userUrls);
 
@@ -52,26 +52,26 @@ namespace UrlShortener.Controllers
 
             return View(paginationData);
         }
-
+        [HttpPost]
         public async Task<IActionResult> AddUrl(string url)
         {
             if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
             {
-                return RedirectToAction("Index");
+                return Json(new { success = false, errors = "Url entered in wron format." });
             }
 
-            var response = await _shortUrlService.CheckUrlAsync(url);
+            //var response = await _shortUrlService.CheckUrlAsync(url);
             
-            if (!response)
-            {
-                return RedirectToAction("Index");
-            }
+            //if (!response)
+            //{
+            //    return Json(new { success = false, errors = "Url is not active." });
+            //}
 
-            var urlData = await _urlDataRepository.GetByOriginalUrl(url);
+            var urlData = await _urlDataRepository.GetByOriginalUrlAsync(url);
 
             if (urlData != null)
             {
-                return RedirectToAction("Index");
+                return Json(new { success = false, errors = "Url already exists." });
             }
 
             string shortedUrl = _shortUrlService.GenerateShortUrl(url);
@@ -88,7 +88,9 @@ namespace UrlShortener.Controllers
 
             await _urlDataRepository.AddAsync(newUrlData);
 
-            return RedirectToAction("Index");
+            newUrlData = await _urlDataRepository.GetByShortUrlAsync(shortedUrl);
+
+            return Json(new { success = true, UrlData = new { Id = newUrlData.Id, OriginalUrl = url, ShortUrl = shortedUrl } });
         }
 
         public async Task<IActionResult> Details(int id)
@@ -111,19 +113,19 @@ namespace UrlShortener.Controllers
 
             if (urlData == null)
             {
-                return RedirectToAction("Index");
-            }
+                return Json(new { success = false, errors = "Url data with this id doesn't exist." });
+            } 
 
             var currentUser = await _userManager.GetUserAsync(User);
 
             if (User.IsInRole(Roles.Admin.ToString()) || currentUser.Id == urlData.User.Id)
             {
                 await _urlDataRepository.DeleteAsync(urlData);
-                return RedirectToAction("Index");
+                return Json(new { success = true });
             }
             else
             {
-                return RedirectToAction("Index");
+                return Json(new { success = false, errors = "You don't have access to do this." });
             }
         }
 
@@ -133,7 +135,7 @@ namespace UrlShortener.Controllers
 
             var shortedUrl = splitedUrl[splitedUrl.Length - 1];
 
-            var urlData = await _urlDataRepository.GetByShortUrl(shortedUrl);
+            var urlData = await _urlDataRepository.GetByShortUrlAsync(shortedUrl);
 
             if (urlData == null)
                 return NotFound();

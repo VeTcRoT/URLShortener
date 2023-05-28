@@ -40,3 +40,7 @@ body {
 .details-wrap {
     max-width: 700px;
 }
+
+.errors-wrap {
+    margin: 10px 0;
+}
