@@ -33,6 +33,8 @@ builder.Services.AddScoped<IShortUrlService, ShortUrlService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+builder.Services.AddHttpClient();
+
 Seed.SeedRoles(builder.Services.BuildServiceProvider());
 
 var app = builder.Build();

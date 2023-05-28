@@ -16,3 +16,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.url-navigation {
+    text-decoration: none;
+    color: grey;
+    padding: 10px 15px;
+    border-bottom: 1px solid grey;
+}
+
+.url-navigation.first {
+    border-right: 1px solid grey;
+}
+
+.url-navigation.url-active {
+    border-bottom: 0;
+    color: #000;
+}

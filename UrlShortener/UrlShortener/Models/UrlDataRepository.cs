@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using UrlShortener.Data;
 
 namespace UrlShortener.Models
@@ -29,14 +30,19 @@ namespace UrlShortener.Models
             return await _dbContext.UrlDatas.ToListAsync();
         }
 
-        public async Task<UrlData> GetByIdAsync(int id)
+        public async Task<UrlData?> GetByIdAsync(int id)
         {
-            return await _dbContext.UrlDatas.FirstAsync(u => u.Id == id);
+            return await _dbContext.UrlDatas.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<UrlData> GetByOriginalUrl(string originalUrl)
+        public async Task<UrlData?> GetByOriginalUrl(string originalUrl)
         {
-            return await _dbContext.UrlDatas.FirstAsync(u => u.OriginalUrl == originalUrl);
+            return await _dbContext.UrlDatas.FirstOrDefaultAsync(u => u.OriginalUrl == originalUrl);
+        }
+
+        public async Task<IEnumerable<UrlData>> GetUserUrls(IdentityUser user)
+        {
+            return await _dbContext.UrlDatas.Where(u => u.User == user).ToListAsync();
         }
     }
 }

@@ -1,18 +1,31 @@
 ﻿@model IEnumerable<UrlViewModel>
+
 @inject IUrlHelper UrlHelper
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = "URLs";
     string baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host.Value}";
 }
 
-<h1>@ViewData["Title"]</h1>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="d-flex">
+        <h2><a class="url-navigation first" asp-controller="Home" asp-action="UserUrls">Your URLs</a></h2>
+        <h2><a class="url-navigation url-active" asp-controller="Home" asp-action="Index">URLs</a></h2>
+    </div>
+}
+else
+{
+    <h2>URLs</h2>
+}
 
 <table class="table">
     <thead>
         <tr>
             <th>Original Url</th>
             <th>Shorted Url</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -25,6 +38,19 @@
                 <td>
                     <a target="_blank" href="@(baseUrl + "/" + url.ShortUrl)">@(baseUrl + "/" + url.ShortUrl)</a>
                 </td>
+                @if (User.IsInRole(Roles.Admin.ToString()))
+                {
+                    <td>
+                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="UrlDetails" asp-route-id="@url.Id">View Details</a>
+                        <a class="btn btn-outline-danger" asp-controller="Home" asp-action="DeleteUrl" asp-route-id="@url.Id">Delete</a>
+                    </td>
+                }
+                else if (User.IsInRole(Roles.User.ToString()))
+                {
+                    <td>
+                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="UrlDetails" asp-route-id="@url.Id">View Details</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>

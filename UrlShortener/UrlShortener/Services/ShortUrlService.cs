@@ -5,6 +5,13 @@ namespace UrlShortener.Services
 {
     public class ShortUrlService : IShortUrlService
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ShortUrlService(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
         public string GenerateShortUrl(string originalUrl)
         {
             using (var sha256 = SHA256.Create())
@@ -17,6 +24,21 @@ namespace UrlShortener.Services
                     .Substring(0, 8);
 
                 return hash;
+            }
+        }
+
+        public async Task<bool> CheckUrlAsync(string url)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(url);
+                return response.IsSuccessStatusCode;
+            }
+            catch (HttpRequestException)
+            {
+                return false;
             }
         }
     }
