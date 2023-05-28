@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UrlShortener.Models;
+using UrlShortener.Services;
 using UrlShortener.ViewModels;
 
 namespace UrlShortener.Controllers
@@ -10,7 +12,7 @@ namespace UrlShortener.Controllers
         private readonly IUrlDataRepository _urlDataRepository;
         private readonly IMapper _mapper;
 
-        public HomeController(IUrlDataRepository urlDataRepository, IMapper mapper)
+        public HomeController(IUrlDataRepository urlDataRepository, IMapper mapper, IShortUrlService shortUrlService, UserManager<IdentityUser> userManager)
         {
             _urlDataRepository = urlDataRepository;
             _mapper = mapper;

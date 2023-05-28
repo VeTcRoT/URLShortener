@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using UrlShortener.Data;
 using UrlShortener.Models;
+using UrlShortener.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddEntityFrameworkStores<UrlShortenerDbContext>();
 
 builder.Services.AddScoped<IUrlDataRepository, UrlDataRepository>();
+
+builder.Services.AddScoped<IShortUrlService, ShortUrlService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

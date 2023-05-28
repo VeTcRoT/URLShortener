@@ -33,5 +33,10 @@ namespace UrlShortener.Models
         {
             return await _dbContext.UrlDatas.FirstAsync(u => u.Id == id);
         }
+
+        public async Task<UrlData> GetByOriginalUrl(string originalUrl)
+        {
+            return await _dbContext.UrlDatas.FirstAsync(u => u.OriginalUrl == originalUrl);
+        }
     }
 }
