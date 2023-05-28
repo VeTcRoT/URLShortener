@@ -7,8 +7,6 @@
     string baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host.Value}";
 }
 
-
-
 <div class="d-flex">
     <h2><a class="url-navigation url-active first" asp-controller="Home" asp-action="UserUrls">Your URLs</a></h2>
     <h2><a class="url-navigation" asp-controller="Home" asp-action="Index">URLs</a></h2>
@@ -38,7 +36,7 @@
                     <a target="_blank" href="@(baseUrl + "/" + url.ShortUrl)">@(baseUrl + "/" + url.ShortUrl)</a>
                 </td>
                 <td>
-                    <a class="btn btn-outline-primary" asp-controller="Home" asp-action="UrlDetails" asp-route-id="@url.Id">View Details</a>
+                    <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@url.Id">View Details</a>
                     <a class="btn btn-outline-danger" asp-controller="Home" asp-action="DeleteUrl" asp-route-id="@url.Id">Delete</a>
                 </td>
             </tr>

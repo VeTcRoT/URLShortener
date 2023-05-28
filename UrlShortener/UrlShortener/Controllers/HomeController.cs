@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Net;
-using System.Text.RegularExpressions;
 using UrlShortener.Models;
 using UrlShortener.Services;
 using UrlShortener.ViewModels;
 
 namespace UrlShortener.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IUrlDataRepository _urlDataRepository;
@@ -27,7 +26,7 @@ namespace UrlShortener.Controllers
             _shortUrlService = shortUrlService;
             _userManager = userManager;
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var urlDatas = await _urlDataRepository.GetAllAsync();
@@ -48,6 +47,7 @@ namespace UrlShortener.Controllers
             return View(mappedUrls);
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddUrl(string url)
         {
             if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
@@ -84,6 +84,21 @@ namespace UrlShortener.Controllers
             await _urlDataRepository.AddAsync(newUrlData);
 
             return RedirectToAction("Index");
+        }
+
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var urlData = await _urlDataRepository.GetByIdAsync(id);
+
+            if (urlData == null) 
+            { 
+                return RedirectToAction("Index");
+            }
+
+            var mappedUrlData = _mapper.Map<UrlDetailsViewModel>(urlData);
+
+            return View(mappedUrlData);
         }
     }
 

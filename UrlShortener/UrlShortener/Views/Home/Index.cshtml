@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<UrlViewModel>
 
-@inject IUrlHelper UrlHelper
 @inject SignInManager<IdentityUser> SignInManager
 
 @{
@@ -41,14 +40,14 @@ else
                 @if (User.IsInRole(Roles.Admin.ToString()))
                 {
                     <td>
-                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="UrlDetails" asp-route-id="@url.Id">View Details</a>
+                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@url.Id">View Details</a>
                         <a class="btn btn-outline-danger" asp-controller="Home" asp-action="DeleteUrl" asp-route-id="@url.Id">Delete</a>
                     </td>
                 }
                 else if (User.IsInRole(Roles.User.ToString()))
                 {
                     <td>
-                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="UrlDetails" asp-route-id="@url.Id">View Details</a>
+                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@url.Id">View Details</a>
                     </td>
                 }
             </tr>

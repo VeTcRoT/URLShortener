@@ -9,6 +9,9 @@ namespace UrlShortener.Profiles
         public MappingProfiles()
         {
             CreateMap<UrlData, UrlViewModel>();
+
+            CreateMap<UrlData, UrlDetailsViewModel>()
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName));
         }
     }
 }

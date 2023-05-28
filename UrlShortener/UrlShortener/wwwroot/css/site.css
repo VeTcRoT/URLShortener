@@ -32,3 +32,7 @@ body {
     border-bottom: 0;
     color: #000;
 }
+
+.form-floating {
+    margin: 10px 0;
+}

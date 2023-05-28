@@ -27,12 +27,12 @@ namespace UrlShortener.Models
 
         public async Task<IEnumerable<UrlData>> GetAllAsync()
         {
-            return await _dbContext.UrlDatas.ToListAsync();
+            return await _dbContext.UrlDatas.Include(u => u.User).ToListAsync();
         }
 
         public async Task<UrlData?> GetByIdAsync(int id)
         {
-            return await _dbContext.UrlDatas.FirstOrDefaultAsync(u => u.Id == id);
+            return await _dbContext.UrlDatas.Include(u => u.User).FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<UrlData?> GetByOriginalUrl(string originalUrl)
