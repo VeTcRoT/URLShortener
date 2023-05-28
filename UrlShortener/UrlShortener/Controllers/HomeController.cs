@@ -55,17 +55,17 @@ namespace UrlShortener.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUrl(string url)
         {
-            if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
                 return Json(new { success = false, errors = "Url entered in wron format." });
             }
 
-            //var response = await _shortUrlService.CheckUrlAsync(url);
-            
-            //if (!response)
-            //{
-            //    return Json(new { success = false, errors = "Url is not active." });
-            //}
+            var response = _shortUrlService.CheckUrlAsync(url);
+
+            if (!response)
+            {
+                return Json(new { success = false, errors = "Url is not active." });
+            }
 
             var urlData = await _urlDataRepository.GetByOriginalUrlAsync(url);
 
