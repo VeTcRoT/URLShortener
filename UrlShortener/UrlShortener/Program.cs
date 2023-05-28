@@ -57,6 +57,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "redirect",
+    pattern: "{*url}",
+    defaults: new { controller = "Home", action = "RedirectToShortedUrl" });
+
 app.MapRazorPages();
 
 app.Run();

@@ -40,6 +40,11 @@ namespace UrlShortener.Models
             return await _dbContext.UrlDatas.FirstOrDefaultAsync(u => u.OriginalUrl == originalUrl);
         }
 
+        public async Task<UrlData?> GetByShortUrl(string shortUrl)
+        {
+            return await _dbContext.UrlDatas.FirstOrDefaultAsync(u => u.ShortUrl == shortUrl);
+        }
+
         public async Task<IEnumerable<UrlData>> GetUserUrls(IdentityUser user)
         {
             return await _dbContext.UrlDatas.Where(u => u.User == user).ToListAsync();

@@ -120,6 +120,20 @@ namespace UrlShortener.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        public async Task<IActionResult> RedirectToShortedUrl(string url)
+        {
+            var splitedUrl = url.Split('/');
+
+            var shortedUrl = splitedUrl[splitedUrl.Length - 1];
+
+            var urlData = await _urlDataRepository.GetByShortUrl(shortedUrl);
+
+            if (urlData == null)
+                return NotFound();
+
+            return Redirect(urlData.OriginalUrl);
+        }
     }
 
 }
