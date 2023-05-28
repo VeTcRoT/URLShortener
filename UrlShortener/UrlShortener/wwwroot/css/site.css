@@ -36,3 +36,7 @@ body {
 .form-floating {
     margin: 10px 0;
 }
+
+.details-wrap {
+    max-width: 700px;
+}

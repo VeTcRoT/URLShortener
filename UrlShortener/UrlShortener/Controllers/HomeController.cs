@@ -47,7 +47,6 @@ namespace UrlShortener.Controllers
             return View(mappedUrls);
         }
 
-        [HttpPost]
         public async Task<IActionResult> AddUrl(string url)
         {
             if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
@@ -86,7 +85,6 @@ namespace UrlShortener.Controllers
             return RedirectToAction("Index");
         }
 
-
         public async Task<IActionResult> Details(int id)
         {
             var urlData = await _urlDataRepository.GetByIdAsync(id);
@@ -99,6 +97,28 @@ namespace UrlShortener.Controllers
             var mappedUrlData = _mapper.Map<UrlDetailsViewModel>(urlData);
 
             return View(mappedUrlData);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var urlData = await _urlDataRepository.GetByIdAsync(id);
+
+            if (urlData == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (User.IsInRole(Roles.Admin.ToString()) || currentUser.Id == urlData.User.Id)
+            {
+                await _urlDataRepository.DeleteAsync(urlData);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
     }
 
