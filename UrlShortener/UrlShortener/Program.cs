@@ -23,11 +23,14 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
 })
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<UrlShortenerDbContext>();
 
 builder.Services.AddScoped<IUrlDataRepository, UrlDataRepository>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+Seed.SeedRoles(builder.Services.BuildServiceProvider());
 
 var app = builder.Build();
 
