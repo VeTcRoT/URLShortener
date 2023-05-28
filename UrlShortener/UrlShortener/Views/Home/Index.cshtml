@@ -4,6 +4,16 @@
 
 @{
     string baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host.Value}";
+
+    var pager = new Pager();
+
+    int pageNo = 0;
+
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
 }
 
 
@@ -18,6 +28,8 @@ else
 {
     <h2>URLs</h2>
 }
+
+<partial name="_pager" model="@pager" />
 
 <table class="table">
     <thead>
@@ -54,4 +66,6 @@ else
         }
     </tbody>
 </table>
+
+<partial name="_pager" model="@pager"/>
 

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using UrlShortener.Models;
 using UrlShortener.Services;
 using UrlShortener.ViewModels;
@@ -27,16 +29,18 @@ namespace UrlShortener.Controllers
             _userManager = userManager;
         }
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
             var urlDatas = await _urlDataRepository.GetAllAsync();
 
             var mappedUrlData = _mapper.Map<IEnumerable<UrlViewModel>>(urlDatas);
+
+            var paginationData = Pagination(mappedUrlData, page);
             
-            return View(mappedUrlData);
+            return View(paginationData);
         }
 
-        public async Task<IActionResult> UserUrls()
+        public async Task<IActionResult> UserUrls(int page = 1)
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -44,7 +48,9 @@ namespace UrlShortener.Controllers
 
             var mappedUrls = _mapper.Map<IEnumerable<UrlViewModel>>(userUrls);
 
-            return View(mappedUrls);
+            var paginationData = Pagination(mappedUrls, page);
+
+            return View(paginationData);
         }
 
         public async Task<IActionResult> AddUrl(string url)
@@ -133,6 +139,28 @@ namespace UrlShortener.Controllers
                 return NotFound();
 
             return Redirect(urlData.OriginalUrl);
+        }
+
+        private IEnumerable<UrlViewModel> Pagination(IEnumerable<UrlViewModel> data, int page)
+        {
+            const int pageSize = 10;
+
+            if (page < 1)
+            {
+                page = 1;
+            }
+
+            int recsCount = data.Count();
+
+            var pager = new Pager(recsCount, page, pageSize);
+
+            int recSkip = (page - 1) * pageSize;
+
+            data = data.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            ViewBag.Pager = pager;
+
+            return data;
         }
     }
 
