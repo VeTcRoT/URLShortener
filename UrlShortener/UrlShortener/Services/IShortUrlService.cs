@@ -5,6 +5,6 @@ namespace UrlShortener.Services
     public interface IShortUrlService
     {
         string GenerateShortUrl(string originalUrl);
-        bool CheckUrlAsync(string url);
+        Task<bool> CheckUrlAsync(string url);
     }
 }

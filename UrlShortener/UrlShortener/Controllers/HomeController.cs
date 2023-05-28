@@ -28,6 +28,7 @@ namespace UrlShortener.Controllers
             _shortUrlService = shortUrlService;
             _userManager = userManager;
         }
+
         [AllowAnonymous]
         public async Task<IActionResult> Index(int page = 1)
         {
@@ -52,6 +53,7 @@ namespace UrlShortener.Controllers
 
             return View(paginationData);
         }
+
         [HttpPost]
         public async Task<IActionResult> AddUrl(string url)
         {
@@ -60,7 +62,7 @@ namespace UrlShortener.Controllers
                 return Json(new { success = false, errors = "Url entered in wron format." });
             }
 
-            var response = _shortUrlService.CheckUrlAsync(url);
+            var response = await _shortUrlService.CheckUrlAsync(url);
 
             if (!response)
             {
@@ -90,7 +92,7 @@ namespace UrlShortener.Controllers
 
             newUrlData = await _urlDataRepository.GetByShortUrlAsync(shortedUrl);
 
-            return Json(new { success = true, UrlData = new { Id = newUrlData.Id, OriginalUrl = url, ShortUrl = shortedUrl } });
+            return Json(new { success = true, UrlData = new { Id = newUrlData?.Id, OriginalUrl = url, ShortUrl = shortedUrl } });
         }
 
         public async Task<IActionResult> Details(int id)
@@ -107,6 +109,7 @@ namespace UrlShortener.Controllers
             return View(mappedUrlData);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var urlData = await _urlDataRepository.GetByIdAsync(id);
@@ -129,6 +132,7 @@ namespace UrlShortener.Controllers
             }
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> RedirectToShortedUrl(string url)
         {
             var splitedUrl = url.Split('/');
@@ -143,10 +147,8 @@ namespace UrlShortener.Controllers
             return Redirect(urlData.OriginalUrl);
         }
 
-        private IEnumerable<UrlViewModel> Pagination(IEnumerable<UrlViewModel> data, int page)
+        private IEnumerable<UrlViewModel> Pagination(IEnumerable<UrlViewModel> data, int page, int pageSize = 10)
         {
-            const int pageSize = 10;
-
             if (page < 1)
             {
                 page = 1;

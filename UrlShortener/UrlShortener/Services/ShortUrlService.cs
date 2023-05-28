@@ -15,22 +15,21 @@ namespace UrlShortener.Services
                 string hash = Convert.ToBase64String(hashBytes)
                     .Replace("/", "_")
                     .Replace("+", "-")
-                    .Substring(0, 8);
+                    [..8];
 
                 return hash;
             }
         }
 
-        public bool CheckUrlAsync(string url)
+        public async Task<bool> CheckUrlAsync(string url)
         {
             try
             {
-                var request = WebRequest.Create(url) as HttpWebRequest;
+                var request = WebRequest.Create(url);
                 request.Method = "HEAD";
-                using (var response = (HttpWebResponse)request.GetResponse())
-                {
-                    return response.StatusCode == HttpStatusCode.OK;
-                }
+
+                using var response = await request.GetResponseAsync();
+                return ((HttpWebResponse)response).StatusCode == HttpStatusCode.OK;
             }
             catch
             {
