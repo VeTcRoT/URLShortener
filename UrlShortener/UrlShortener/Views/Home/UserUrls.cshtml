@@ -1,0 +1,59 @@
+﻿@model IEnumerable<UrlViewModel>
+
+@inject IUrlHelper UrlHelper
+
+@{
+    ViewData["Title"] = "Your URLs";
+    string baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host.Value}";
+
+    var pager = new Pager();
+
+    int pageNo = 0;
+
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+<div class="d-flex">
+    <h2><a class="url-navigation url-active first" asp-controller="Home" asp-action="UserUrls">Your URLs</a></h2>
+    <h2><a class="url-navigation" asp-controller="Home" asp-action="Index">URLs</a></h2>
+</div>
+
+<form method="post" asp-controller="Home" asp-action="AddUrl" class="add-form d-flex gap-2 mt-3">
+    <input type="url" class="form-control add-url" name="url" placeholder="Your URL"/>
+    <button type="submit" class="btn btn-success" style="min-width: fit-content; flex: 20%;">Short Url</button>
+</form>
+
+<div class="errors-wrap"></div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Original Url</th>
+            <th>Shorted Url</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UrlViewModel url in Model)
+        {
+            <tr>
+                <td>
+                    <a target="_blank" href="@url.OriginalUrl">@(url.OriginalUrl.Length > 40 ? url.OriginalUrl.Substring(0, 40) + "..." : url.OriginalUrl)</a>
+                </td>
+                <td>
+                    <a target="_blank" href="@(baseUrl + "/" + url.ShortUrl)">@(baseUrl + "/" + url.ShortUrl)</a>
+                </td>
+                <td>
+                    <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@url.Id">View Details</a>
+                    <a class="btn btn-outline-danger delete-link" asp-controller="Home" asp-action="Delete" asp-route-id="@url.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_pager" model="@pager" />

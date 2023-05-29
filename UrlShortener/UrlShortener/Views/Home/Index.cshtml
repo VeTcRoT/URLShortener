@@ -1,8 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<UrlViewModel>
+
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
+    string baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host.Value}";
+
+    var pager = new Pager();
+
+    int pageNo = 0;
+
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="d-flex">
+        <h2><a class="url-navigation first" asp-controller="Home" asp-action="UserUrls">Your URLs</a></h2>
+        <h2><a class="url-navigation url-active" asp-controller="Home" asp-action="Index">URLs</a></h2>
+    </div>
+}
+else
+{
+    <h2>URLs</h2>
+}
+
+<partial name="_pager" model="@pager" />
+
+<div class="errors-wrap"></div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Original Url</th>
+            <th>Shorted Url</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UrlViewModel url in Model)
+        {
+            <tr>
+                <td>
+                    <a target="_blank" href="@url.OriginalUrl">@(url.OriginalUrl.Length > 40 ? url.OriginalUrl.Substring(0, 40) + "..." : url.OriginalUrl)</a>
+                </td>
+                <td>
+                    <a target="_blank" href="@(baseUrl + "/" + url.ShortUrl)">@(baseUrl + "/" + url.ShortUrl)</a>
+                </td>
+                @if (User.IsInRole(Roles.Admin.ToString()))
+                {
+                    <td>
+                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@url.Id">View Details</a>
+                        <a class="btn btn-outline-danger delete-link" asp-controller="Home" asp-action="Delete" asp-route-id="@url.Id">Delete</a>
+                    </td>
+                }
+                else if (User.IsInRole(Roles.User.ToString()))
+                {
+                    <td>
+                        <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Details" asp-route-id="@url.Id">View Details</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_pager" model="@pager"/>
+

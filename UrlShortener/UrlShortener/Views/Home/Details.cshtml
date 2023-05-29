@@ -1,0 +1,28 @@
+﻿@model UrlDetailsViewModel
+
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    string baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host.Value}";
+
+    var userId = (await UserManager.GetUserAsync(User)).Id;
+}
+
+<div class="details-wrap mx-auto">
+    <h2>URL information</h2>
+
+    <p class="form-label">Original URL</p>
+    <p class="form-control"><a target="_blank" href="@Model.OriginalUrl">@(Model.OriginalUrl.Length > 60 ? Model.OriginalUrl.Substring(0, 60) + "..." : Model.OriginalUrl)</a></p>
+    <p class="form-label">Shorted URL</p>
+    <p class="form-control"><a target="_blank" href="@(baseUrl + "/" + Model.ShortUrl)">@(baseUrl + "/" + Model.ShortUrl)</a></p>
+    <p class="form-label">Create Date</p>
+    <p class="form-control">@Model.CreatedDate.ToShortDateString()</p>
+    <p class="form-label">Created By</p>
+    <p class="form-control">@Model.Username</p>
+
+    @if (User.IsInRole(Roles.Admin.ToString()) || Model.UserId == userId)
+    {
+        <a class="btn btn-danger delete-link-single" style="width: 100%;" asp-controller="Home" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    }
+    <div class="errors-wrap"></div>
+</div>
