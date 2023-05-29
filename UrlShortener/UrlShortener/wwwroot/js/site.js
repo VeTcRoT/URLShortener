@@ -53,6 +53,22 @@
         }
     });
 
+    $('.delete-link-single').click(function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        if (confirm('Are you sure you want to delete this record?')) {
+            $.post(url, function (data) {
+                if (data.success) {
+                    window.location.replace(window.location.origin);
+                }
+                else {
+                    var addErrorsContainer = $('.errors-wrap');
+                    showValidationErrors(addErrorsContainer, data.errors);
+                }
+            });
+        }
+    });
+
     function deleteValidationErrors() {
         $('.errors-wrap').empty();
     }
